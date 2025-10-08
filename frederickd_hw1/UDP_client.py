@@ -12,10 +12,9 @@ server_port = int(sys.argv[3])
 conn_id = sys.argv[4]
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.settimeout(60)
+sock.settimeout(10)
 
-tries = 0
-while tries < 3:
+while True:
     try:
         sock.sendto(f"HELLO {conn_id}".encode(), (server_ip, server_port))
         data, _ = sock.recvfrom(1024)
@@ -25,15 +24,11 @@ while tries < 3:
             print(f"Connection established {reply[1]} {reply[2]} {reply[3]}")
             break
         elif reply[0] == "RESET":
-            print(f"Connection Error {reply[1]}")
-            conn_id = input("Enter new Connection ID: ")
-            tries += 1
-    except socket.timeout:
-        print(f"Connection Error {conn_id}")
-        conn_id = input("Enter new Connection ID: ")
-        tries += 1
+            print(f"Connection Error")
+            break
 
-if tries == 3:
-    print("Connection Failure")
+    except socket.timeout:
+        print(f"Connection Failure")
+        break
 
 sock.close()
