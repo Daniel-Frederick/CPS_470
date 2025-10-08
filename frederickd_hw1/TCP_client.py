@@ -22,7 +22,7 @@ while True:
             sock.close()
             break
         elif reply[0] == "RESET":
-            print(f"Connection Error")
+            print(f"Connection Error {conn_id}")
             break
         sock.close()
     except (socket.timeout, ConnectionRefusedError):

@@ -24,7 +24,7 @@ while True:
             print(f"Connection established {reply[1]} {reply[2]} {reply[3]}")
             break
         elif reply[0] == "RESET":
-            print(f"Connection Error")
+            print(f"Connection Error {conn_id}")
             break
 
     except socket.timeout:
