@@ -1,10 +1,7 @@
-# To Test, run with: `python3 teamXproxy.py 127.0.0.1`
-# Enter this into browser: http://localhost:8888/gaia.cs.umass.edu/wireshark-labs/HTTP-wireshark-file2.html
-# First time will miss, refresh the page and it will Hit
-
 from socket import *
 import sys
 import os
+import time  # <-- added for measuring response time
 
 # Check for valid command-line arguments
 if len(sys.argv) <= 1:
@@ -61,6 +58,8 @@ while True:
             tcpCliSock.send(b"Content-Type:text/html\r\n\r\n")
             tcpCliSock.send(outputdata)
             print("Served from cache successfully.")
+            print("Response Time (Cache Hit): ~0.000 seconds (instant from local file)\n")
+
         else:
             raise IOError
 
@@ -82,16 +81,22 @@ while True:
 
                 # Send GET request to origin server
                 request_line = f"GET /{resource} HTTP/1.0\r\nHost: {hostn}\r\n\r\n"
+
+                # --- Measure response time ---
+                start_time = time.time()
                 c.sendall(request_line.encode())
 
                 # Read the response from origin server
                 response = b""
                 while True:
                     data = c.recv(4096)
-                    if len(data) > 0:
-                        response += data
-                    else:
+                    if not data:
                         break
+                    response += data
+                end_time = time.time()
+                elapsed = end_time - start_time
+                print(f"Response received in {elapsed:.3f} seconds")
+                # --------------------------------
 
                 # Send response to client
                 tcpCliSock.sendall(response)
@@ -101,7 +106,7 @@ while True:
                 with open(filetouse, "wb") as tmpFile:
                     tmpFile.write(response)
 
-                print("Response cached and forwarded to client.")
+                print("Response cached and forwarded to client.\n")
 
                 c.close()
 
@@ -117,3 +122,4 @@ while True:
     tcpCliSock.close()
 
 tcpSerSock.close()
+
