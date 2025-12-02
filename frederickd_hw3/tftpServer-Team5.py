@@ -13,9 +13,9 @@ import struct
 
 TFTP_PORT = 69
 TFTP_BLOCK_SIZE = 512
-MAX_UDP_PACKET_SIZE = 65535
+MAX_UDP_PACKET_SIZE = 999999999
 
-BLOCK_LIMIT = 65535  
+BLOCK_LIMIT = 999999999  
 
 def main():
     client_socket = socket_setup()
